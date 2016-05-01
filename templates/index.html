@@ -1,0 +1,40 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Some title</title>
+        <meta charset="utf-8"></meta>
+    </head>
+<body>
+{% for e in events %}
+    <div>
+        <h2>
+            <a href="{% url 'event_page' event_pk=e.pk %}">{{ e }}(ссылка на событие)</a>
+        </h2>
+        <p>
+            <a href="{% url 'schedule_list' event_pk=e.pk %}">расписание: (ссылка на список расписаний):</a>
+        </p>
+        {% for s in e.schedule_set.all %}
+            <div style="margin: 0px;">
+                - "{{ s }}" {{ s.start_date|date:"d.m.Y H:i" }}-{{ s.end_date|date:"H:i" }},
+                спикер: <a href="{% url 'user_info' user_pk=s.speaker.pk %}">{{ s.speaker }}</a>
+            </div>
+            <div style="margin-left: 20px; margin-top: 0px">
+                {% if s.question_set.all %}
+                    <h4 style="margin: 0px; margin-left: 15px">Голосования:</h4>
+                    {% for q in s.question_set.all %}
+                        <li style="margin-left: 20px" 20px>{{ q }}</li>
+                        {% for choice in q.choice_set.all %}
+                            <div style="margin-left: 40px;">
+                                - {{ choice }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+
+</body>
+</html>
