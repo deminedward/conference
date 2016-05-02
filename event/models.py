@@ -79,7 +79,7 @@ class MyUser(AbstractUser):
         if not self.avatar:
             avatar_url = None
         else:
-            avatar_url = self.avatar.url
+            avatar_url = self.avatar.name
         return dict(
             username=self.username,
             first_name=self.first_name,
@@ -146,6 +146,7 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
+    vote_counter = models.IntegerField(default=0)
 
     def __str__(self):
         return '%s' % self.choice_text
@@ -157,9 +158,9 @@ class Choice(models.Model):
             )
 
 class Vote(models.Model):
-    user = models.ForeignKey(MyUser)
+    # user = models.ForeignKey(MyUser)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
-
+    vote_counter = models.IntegerField(default=0)
 
 
 # class CustomUser(models.Model):

@@ -101,7 +101,6 @@ class ScheduleInline(admin.TabularInline):  # StackedInline or TabularInline
         return super(ScheduleInline, self).get_formset(request, obj, **kwargs)
 
     def clean(self):
-        print('--------inline-----clean----')
         start_date = self.cleaned_data['start_date']
         end_date = self.cleaned_data['end_date']
         if start_date > end_date:
@@ -120,6 +119,32 @@ class ScheduleInline(admin.TabularInline):  # StackedInline or TabularInline
             return super(ScheduleInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+import os
+import shutil
+from shutil import copyfile
+from django.conf import settings
+MEDIA_ROOT = getattr(settings, 'MEDIA_ROOT')
+BASE_DIR = getattr(settings, 'BASE_DIR')
+
+
+def make_app(modeladmin, request, queryset):
+    event = queryset.first()
+    speakers = MyUser.objects.filter(event=event)
+    dir_name = str(event.pk) + '_event'
+    dir_path = os.path.join(BASE_DIR, dir_name)
+    if os.path.isdir(dir_path):
+        shutil.rmtree(dir_path)
+    os.mkdir(dir_path)
+    os.mkdir(os.path.join(dir_path, 'avatars'))
+    for s in speakers:
+        if s.avatar:
+            src = os.path.join(BASE_DIR, MEDIA_ROOT, s.avatar.name)
+            dst = os.path.join(dir_path, s.avatar.name)
+            copyfile(src, dst)
+
+make_app.short_description = u"подготовить к обновлению приложения"
+
+
 class EventAdmin(admin.ModelAdmin):
     def get_name(self):
         return self.name
@@ -130,6 +155,7 @@ class EventAdmin(admin.ModelAdmin):
     inlines = [
         ScheduleInline,
     ]
+    actions = [make_app]
 
     def __str__(self):
         return '%s' % self.name

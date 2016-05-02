@@ -23,7 +23,9 @@
                 {% if s.question_set.all %}
                     <h4 style="margin: 0px; margin-left: 15px">Голосования:</h4>
                     {% for q in s.question_set.all %}
-                        <li style="margin-left: 20px" 20px>{{ q }}</li>
+                        <li style="margin-left: 20px" 20px>
+                            <a href="{% url 'vote_results' question_pk=q.pk %}">{{ q }}</a>
+                        </li>
                         {% for choice in q.choice_set.all %}
                             <div style="margin-left: 40px;">
                                 - {{ choice }}

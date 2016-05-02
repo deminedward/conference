@@ -27,5 +27,8 @@ urlpatterns = [
     url(r'^api/schedule/(?P<event_pk>[0-9]+)/$', views.schedule_list, name='schedule_list'),
     url(r'^api/index/$', views.index, name='index'),
     url(r'^api/user_info/(?P<user_pk>[0-9]+)/$', views.user_info, name='user_info'),
+    url(r'^api/vote_results/(?P<question_pk>[0-9]+)/$', views.vote_results, name='vote_results'),
+    url(r'^api/vote/(?P<question_pk>[0-9]+)/$', views.vote, name='vote'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
